@@ -1,0 +1,10 @@
+
+config.inc.php
+dbc.php
+.env
+.DS_Store
+Thumbs.db
+vendor/
+node_modules/
+.idea/
+.vscode/

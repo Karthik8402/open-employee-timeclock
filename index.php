@@ -1,0 +1,5 @@
+<?php
+echo '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0531879237494766" crossorigin="anonymous"></script>';
+
+header("Location: timeclock.php");
+?>
