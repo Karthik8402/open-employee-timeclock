@@ -1,5 +1,4 @@
-
-config.inc.php
+database.php
 dbc.php
 .env
 .DS_Store

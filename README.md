@@ -14,6 +14,17 @@ A web-based employee time tracking system, originally built in 2010. This reposi
 - **Reporting**: detailed hours-worked reports and audit logs.
 - **IP Restriction**: Limit clock-in ability to specific office networks.
 
+### Phase 4: Security & Auth (Completed)
+- [x] **Refactor Authentication**
+    - [x] Modify `public/login.php` to check password hash using `password_verify`
+    - [x] Fallback support for legacy passwords (re-hash on login?) or force reset? *Decision: Manual reset best for security, or auto-update on first login.*
+- [x] **Refactor User Creation/Editing**
+    - [x] Modify `public/admin/usercreate.php` to use `password_hash`
+    - [x] Modify `public/admin/useredit.php` to use `password_hash`
+    - [x] Modify `public/leftmain.php` (Employee Timeclock Login) to use `password_verify`
+- [ ] **Output Escaping**
+    - [ ] Audit `display.php` and `timeclock.php` for XSS vulnerabilities.
+
 ## ?? Setup Guide (XAMPP / Localhost)
 
 ### 1. Database Setup
@@ -36,7 +47,9 @@ A web-based employee time tracking system, originally built in 2010. This reposi
 ### 3. Migration (Required for PHP 8+)
 The code requires significant refactoring to run on modern PHP.
 - **Goal**: Replace `mysql_*` with PDO.
-- **Progress**: See `implementation_plan.md` for the detailed roadmap.
+- **Progress**:- [x] **Security Implementation**
+    - [x] `password_hash` migration.
+    - [x] SQL Injection fixes (basic).
 
 ## ?? Technologies
 - **Backend**: PHP (Legacy) -> Target: PHP 8.4
