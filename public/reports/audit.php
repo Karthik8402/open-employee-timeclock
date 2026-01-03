@@ -1,12 +1,15 @@
 <?php
+// Enable error reporting - REMOVE IN PRODUCTION
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-session_start();
+// Use shared session initialization for iPage compatibility
+include dirname(__DIR__) . '/session_init.php';
 
 $self = $_SERVER['PHP_SELF'];
 $request = $_SERVER['REQUEST_METHOD'];
 $current_page = "audit.php";
 
-include '../config_defaults.php'; // PHP 8 compatibility polyfills
 include '../config.inc.php';
 
 if ($use_reports_password == "yes") {

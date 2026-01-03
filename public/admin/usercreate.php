@@ -1,5 +1,10 @@
 <?php
-session_start();
+// Enable error reporting - REMOVE IN PRODUCTION
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Use shared session initialization for iPage compatibility
+include dirname(__DIR__) . '/session_init.php';
 
 $self = $_SERVER['PHP_SELF'];
 $request = $_SERVER['REQUEST_METHOD'];
@@ -158,7 +163,7 @@ if ((@$tmp_username == $post_username) || ($password !== $confirm_password) ||
 (($reports_perms != '1') && (!empty($reports_perms))) || (($time_admin_perms != '1') && (!empty($time_admin_perms))) ||
 (($post_disabled != '1') && (!empty($post_disabled))) || (!empty($string))|| (!empty($string2))) {
 
-if (@tmp_username == $post_username) {$tmp_username = stripslashes($tmp_username);}
+if (@$tmp_username == $post_username) {$tmp_username = stripslashes($tmp_username);}
 
 echo "<table width=100% height=89% border=0 cellpadding=0 cellspacing=1>\n";
 echo "  <tr valign=top>\n";

@@ -56,7 +56,7 @@ CREATE TABLE `employees` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Default Admin (Password: 'admin123' - CHANGE THIS AFTER FIRST LOGIN!)
-INSERT INTO `employees` VALUES ('admin', NULL, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrator', 'admin@example.com', 'General', 'Main Office', 1, 1, 1, 0);
+INSERT INTO `employees` VALUES ('admin', NULL, '$2y$10$umwRACMHnti/ou89hv6gbuvM8fs1YR0yy886Cvh7b4CB/QjkGMfI2', 'Administrator', 'admin@example.com', 'General', 'Main Office', 1, 1, 1, 0);
 
 -- --------------------------------------------------------
 

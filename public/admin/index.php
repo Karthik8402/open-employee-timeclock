@@ -1,7 +1,8 @@
 <?php
 echo '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0531879237494766" crossorigin="anonymous"></script>';
 
-session_start();
+// Use shared session initialization for iPage compatibility
+include dirname(__DIR__) . '/session_init.php';
 
 include '../config.inc.php';
 include '../config_defaults.php'; // Provides defaults for any missing config vars

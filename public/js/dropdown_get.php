@@ -7,26 +7,37 @@ select.options[0] = new Option("Choose One");
 select.options[0].value = '';
 
 <?php
+// Fix: Use global $db and proper PDO methods
+global $db, $db_prefix;
 
-@$office_name = $_GET['officename'];
+$office_name = isset($_GET['officename']) ? $_GET['officename'] : '';
 
 $query = "select * from ".$db_prefix."offices";
-$result = mysql_query($query);
 
-$cnt=1;
-while ($row=mysql_fetch_array($result)) {
-  if (isset($abc)) {
-  echo "select.options[$cnt] = new Option(\"".$row['officename']."\");\n";
-  echo "select.options[$cnt].value = \"".$row['officename']."\";\n";
-  } elseif ("".$row['officename']."" == stripslashes($office_name)) {
-  echo "select.options[$cnt] = new Option(\"".$row['officename']."\",\"".$row['officename']."\", true, true);\n";
-  } else {
-  echo "select.options[$cnt] = new Option(\"".$row['officename']."\");\n";
-  echo "select.options[$cnt].value = \"".$row['officename']."\";\n";
-  }
-  $cnt++;
+try {
+    $result = $db->query($query);
+    
+    if ($result) {
+        $cnt=1;
+        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+            $name_safe = addslashes($row['officename']);
+            
+            // Replicate original logic for selection
+            // $abc check removed as it appears undefined/dead code
+            
+            if ($row['officename'] == stripslashes($office_name)) {
+                echo "select.options[$cnt] = new Option(\"$name_safe\", \"$name_safe\", true, true);\n";
+            } else {
+                echo "select.options[$cnt] = new Option(\"$name_safe\");\n";
+                echo "select.options[$cnt].value = \"$name_safe\";\n";
+            }
+            $cnt++;
+        }
+    }
+} catch (Exception $e) {
+    // Output error to JS console for debugging
+    echo "console.error('PHP Error in office_names: " . addslashes($e->getMessage()) . "');\n";
 }
-mysql_free_result($result);
 ?>
 }
 
@@ -36,46 +47,63 @@ var groups_select = document.form.group_name;
 groups_select.options[0] = new Option("Choose One");
 groups_select.options[0].value = '';
 
-if (offices_select.options[offices_select.selectedIndex].value != '') {
-  groups_select.length = 0;
+// Logic to clear groups if an office is selected, 
+// but we will overwrite them anyway in the loop below.
+// Keeping it simple: resetting to "..." is handled in the PHP loop.
+if (offices_select.options[offices_select.selectedIndex].value == '') {
+    groups_select.length = 0;
+    groups_select.options[0] = new Option("Choose One");
+    groups_select.options[0].value = '';
 }
 
 <?php
-
+// Outer loop for offices to generate conditional logic
 $query = "select * from ".$db_prefix."offices";
-$result = mysql_query($query);
 
-while ($row=mysql_fetch_array($result)) {
-$office_row = addslashes("".$row['officename']."");
+try {
+    $result = $db->query($query);
+
+    if ($result) {
+        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+            $office_row = $row['officename'];
+            $office_row_js = addslashes($office_row);
+            
+            // Start JS conditional block
+            ?>
+    if (offices_select.options[offices_select.selectedIndex].text == "<?php echo $office_row_js; ?>") {
+    <?php
+            // Inner query for groups
+            // Note: Ensuring we use the correct column names from create_tables.sql (groupname, officeid)
+            $query2 = "select g.groupname from " . $db_prefix . "groups g, " . $db_prefix . "offices o 
+                       where g.officeid = o.officeid 
+                       and o.officename = '" . addslashes($office_row) . "'";
+            
+            $result2 = $db->query($query2);
+            
+            echo "groups_select.options[0] = new Option(\"...\");\n";
+            echo "groups_select.options[0].value = '';\n";
+            $cnt = 1;
+
+            if ($result2) {
+                while ($row2 = $result2->fetch(PDO::FETCH_ASSOC)) {
+                    $groups = addslashes($row2['groupname']);
+                    echo "groups_select.options[$cnt] = new Option(\"$groups\");\n";
+                    echo "groups_select.options[$cnt].value = \"$groups\";\n";
+                    $cnt++;
+                }
+            }
+    ?>
+    }
+    <?php
+        }
+    }
+} catch (Exception $e) {
+     echo "console.error('PHP Error in group_names: " . addslashes($e->getMessage()) . "');\n";
+}
 ?>
 
-if (offices_select.options[offices_select.selectedIndex].text == "<?php echo $office_row; ?>") {
-<?php
-$query2 = "select * from ".$db_prefix."offices, ".$db_prefix."groups where ".$db_prefix."groups.officeid = ".$db_prefix."offices.officeid 
-           and ".$db_prefix."offices.officename = '".$office_row."'";
-$result2 = mysql_query($query2);
-echo "groups_select.options[0] = new Option(\"...\");\n";
-echo "groups_select.options[0].value = '';\n";
-$cnt = 1;
-
-while ($row2=mysql_fetch_array($result2)) {
-  $groups = "".$row2['groupname']."";
-  echo "groups_select.options[$cnt] = new Option(\"$groups\");\n";
-  echo "groups_select.options[$cnt].value = \"$groups\";\n";
-  $cnt++;
-}
-
-?>
-}
-<?php
-}
-mysql_free_result($result);
-mysql_free_result($result2);
-?>
-
-if (groups_select.options[groups_select.selectedIndex].value != '') {
-  groups_select.length = 0;
-}
+// Removed faulty logic that clears groups if something is selected. 
+// This was likely preventing the groups from persisting.
 }
 
 </script>

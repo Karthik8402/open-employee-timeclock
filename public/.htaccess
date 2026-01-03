@@ -1,0 +1,9 @@
+# Enable directory access
+Options -Indexes
+DirectoryIndex index.php timeclock.php
+
+# PHP settings for iPage
+<IfModule mod_php.c>
+    php_flag display_errors on
+    php_flag log_errors on
+</IfModule>

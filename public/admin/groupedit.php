@@ -1,5 +1,6 @@
 <?php
-session_start();
+// Use shared session initialization for iPage compatibility
+include dirname(__DIR__) . '/session_init.php';
 
 include '../config_defaults.php'; // PHP 8 compatibility polyfills
 include '../config.inc.php';

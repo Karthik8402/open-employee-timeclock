@@ -2,7 +2,8 @@
 echo '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0531879237494766" crossorigin="anonymous"></script>';
 
 
-session_start();
+// Use shared session initialization for iPage compatibility
+include dirname(__DIR__) . '/session_init.php';
 
 $self = $_SERVER['PHP_SELF'];
 $request = $_SERVER['REQUEST_METHOD'];

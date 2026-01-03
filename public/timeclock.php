@@ -1,5 +1,10 @@
 <?php
-session_start();
+// Enable error reporting - REMOVE IN PRODUCTION
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Use shared session initialization for iPage compatibility
+include __DIR__ . '/session_init.php';
 
 include 'config.inc.php';
 include 'header.php';

@@ -109,7 +109,17 @@ $date_link = isset($date_link) ? $date_link : 'http://www.historychannel.com/tdi
 
 // Include helper functions (only if not already loaded by config.inc.php)
 if (!function_exists('secsToHours')) {
-    require_once dirname(__DIR__) . '/src/functions.php';
+    // Auto-detect path for both local and iPage structures
+    $possiblePaths = [
+        dirname(__DIR__) . '/src/functions.php',   // Local: public/../src/
+        __DIR__ . '/src/functions.php',            // Flat: Timeclock/src/
+    ];
+    foreach ($possiblePaths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            break;
+        }
+    }
 }
 
 ?>

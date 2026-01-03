@@ -1,5 +1,10 @@
 <?php
-session_start();
+// Enable error reporting - REMOVE IN PRODUCTION
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Use shared session initialization for iPage compatibility
+include __DIR__ . '/session_init.php';
 
 include 'config.inc.php';
 include 'header.php';
@@ -10,19 +15,27 @@ $self = $_SERVER['PHP_SELF'];
 
 if (isset($_POST['login_userid']) && (isset($_POST['login_password']))) {
     $login_userid = $_POST['login_userid'];
-    // $login_password = crypt($_POST['login_password'], 'xy'); // Removed Legacy Crypt
     $login_password = $_POST['login_password'];
-
 
     // Use the shimmed mysql_real_escape_string for basic injection protection via the bridge
     $login_userid_clean = mysql_real_escape_string($login_userid);
 
-    // Updated Query: Select all needed columns, removed hardcoded connection dependency implict in old code if any
+    // Updated Query: Select all needed columns
     $query = "select empfullname, employee_passwd, admin, time_admin from ".$db_prefix."employees
               where empfullname = '".$login_userid_clean."'";
     $result = mysql_query($query);
     
     $row = mysql_fetch_array($result);
+
+    // DEBUG - REMOVE AFTER TESTING
+    echo "<!-- DEBUG: Query = $query -->";
+    echo "<!-- DEBUG: Row found = " . ($row ? 'YES' : 'NO') . " -->";
+    if ($row) {
+        echo "<!-- DEBUG: User = " . $row['empfullname'] . " -->";
+        echo "<!-- DEBUG: Hash = " . substr($row['employee_passwd'], 0, 20) . "... -->";
+        echo "<!-- DEBUG: password_verify result = " . (password_verify($login_password, $row['employee_passwd']) ? 'TRUE' : 'FALSE') . " -->";
+    }
+    // END DEBUG
 
     if ($row) {
         $admin_username = $row['empfullname'];

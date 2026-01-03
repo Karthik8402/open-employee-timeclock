@@ -2,15 +2,29 @@
 // public/config.inc.php - BRIDGE FILE
 // This file maintains compatibility with legacy code while using the new structure.
 
-require_once __DIR__ . '/../src/Database.php';
-require_once __DIR__ . '/../src/functions.php';
+// Auto-detect directory structure (works for both local and iPage)
+$baseDir = __DIR__;
+if (file_exists($baseDir . '/../src/Database.php')) {
+    // Local structure: public/config.inc.php with src/ beside public/
+    $srcDir = $baseDir . '/../src';
+    $configDir = $baseDir . '/../config';
+} elseif (file_exists($baseDir . '/src/Database.php')) {
+    // Flat structure: everything in same folder with src subfolder
+    $srcDir = $baseDir . '/src';
+    $configDir = $baseDir . '/config';
+} else {
+    die("Error: Cannot find src/Database.php. Please check your directory structure.");
+}
+
+require_once $srcDir . '/Database.php';
+require_once $srcDir . '/functions.php';
 
 // Initialize Database
 global $db;
 $db = new Database();
 
 // Load Configuration from the new secure file
-$config = require __DIR__ . '/../config/database.php';
+$config = require $configDir . '/database.php';
 
 // Re-map variables expected by legacy code
 $db_hostname = $config['host'];

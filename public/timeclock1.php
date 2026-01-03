@@ -1,5 +1,6 @@
 <?php
-session_start();
+// Use shared session initialization for iPage compatibility
+include __DIR__ . '/session_init.php';
 
 include 'config.inc.php';
 include 'header.php';
